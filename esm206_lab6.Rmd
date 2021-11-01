@@ -7,24 +7,59 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(palmerpenguins)
+library(broom)
+library(equatiomatic)
 ```
 
-## R Markdown
+## Example of a rank-based test
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+We'll make our own samples, using a psuedorandom generator.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+```{r}
+set.seed(1414)
+gp_1 <- sample.int(20, size = 15, replace = TRUE)
 
-```{r cars}
-summary(cars)
+set.seed(1424)
+gp_2 <- sample.int(30, size = 15, replace = TRUE)
 ```
 
-## Including Plots
+Quick look histograms (built into R)
 
-You can also embed plots, for example:
+```{r}
+hist(gp_1)
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+hist(gp_2)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Try a t-test:
+```{r}
+t.test(gp_1, gp_2)
+```
+
+What does p-value mean?
+
+If bthese samples were drawn from populations with the same mean, then the probability of taking two random samples with means *at least as different* as the sample means we found by random chance (taking into account spread and sample size) is 19.8%.
+
+Retain (fail to reject null hypothesis) the null hypothesis. >> There is no significant difference in means between group 1 and group 2.
+(Don't say "accept" the null.)
+
+Now let's comapre this outcome to a rank-based test.
+
+## Mann Whitney U unpaired rank-based test
+
+```{r}
+mwu <- wilcox.test(gp_1, gp_2)
+
+mwu
+```
+
+What does this p-value mean? 
+
+If these samples were drawn from populations with the same ranks (medians), the probability of taking two random samples with ranks *at least this different* by chance is 0.28.
+
+There is no significant difference in ranks (or medians) between group 1 and group 2 (statistical summary).
+
+Example of writing it up: Median scores for group 1 (M = 14) and group 2 (M = 12) did not differ significantly. (Mann Whitney U test U(df) = 86, p = 0.28)
