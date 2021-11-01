@@ -62,4 +62,45 @@ If these samples were drawn from populations with the same ranks (medians), the 
 
 There is no significant difference in ranks (or medians) between group 1 and group 2 (statistical summary).
 
-Example of writing it up: Median scores for group 1 (M = 14) and group 2 (M = 12) did not differ significantly. (Mann Whitney U test U(df) = 86, p = 0.28)
+Example of writing it up: Median scores for group 1 (M = 14) and group 2 (M = 12) did not differ significantly. (Mann Whitney U test U(df) = 86, p = 0.28).
+
+## Linear regression
+
+Simple linear regression (single dependent bariable, a single independent variable)
+
+```{r}
+# Make an exploratory plot of penguin body mass vs. flipper length (X)
+# When knitted, no part of code will show up in knitted document (include = FALSE command in r header)
+
+ggplot(data = penguins, aes(x = flipper_length_mm, y = body_mass_g)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+
+# Don't use geom_smooth in final document unless you can fully explain model and what it means, including the error bars
+```
+
+Find a linear regression model using ordinary least squares describing the relationship between flipper length and body mass for these penguins.
+
+3 pieces:
+
+- What type of model?
+- What is the relationship to model (DV - IV(s))
+- Where is the data that's used to create this model?
+
+```{r}
+penguin_lm <- lm(body_mass_g ~ flipper_length_mm, data = penguins)
+```
+
+### broom package returns model outputs as tidy data frames
+```{r}
+penguin_lm_tidy <- broom::tidy(penguin_lm)
+
+penguin_lm_tidy
+```
+
+How can I actually include my model equation in a report?
+
+```{r}
+extract_eq(model = penguin_lm, use_coefs = TRUE)
+```
+
